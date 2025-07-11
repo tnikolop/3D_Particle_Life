@@ -32,14 +32,10 @@ public:
 	
 	glm::vec3 get_position() const;
 	glm::vec3 get_velocity() const;
-	glm::vec3 get_type() const;
+	int get_type() const;
 	ofFloatColor getColor() const;
-
 };
 
-Particle::Particle(float x, float y, float z, int color)
-{
-}
 
 
 class ofApp : public ofBaseApp{
@@ -50,5 +46,35 @@ class ofApp : public ofBaseApp{
 		void draw() override;
 
 		void keyPressed(int key) override;
+
+		vector<Particle> all_particles;		// vector containing all particles;
+		vector<glm::vec3> all_positions;	// this is needed for the vbo	
+		vector<ofFloatColor> all_colors;  	// also for vbo
+
+		void Create_particles();
+		void initialize_forces(const float min, const float max);
+		void initialize_color_force_range(const short min, const short max);
+		void restart();
+		void shuffle();
+		void save_settings();
+		void create_settings_dir();
+		void load_settings(ofFile &file);
+	
+	ofxPanel gui;
+	ofxGuiGroup RedSettings, GreenSettings, YellowSettings, SimSettings;
+	ofxButton button_restart, button_shuffle, button_save_settings;
+	ofxToggle  toggle_shuffle_numbers, toggle_shuffle_radi;
+	ofxFloatSlider	sliderRR,sliderRG,sliderRY, sliderGR,sliderGG,sliderGY, sliderYR,sliderYG,sliderYY, 
+					slider_viscosity, slider_wall_repel_force;
+	ofxIntSlider slider_rangeRR, slider_rangeRG, slider_rangeRY,
+				 slider_rangeGR, slider_rangeGG, slider_rangeGY, slider_rangeYR, slider_rangeYG, slider_rangeYY;
+	ofxIntField field_number_G, field_number_Y,field_number_R;
+	ofVbo vbo;								// more efficient batch drawing
+
+	ofxDirDropdown dropdown;
+	ofxInputField<string> field_get_name;	// input field to enter the name for saving the settings
+	ofxLabel feedback;
+
+	ofEasyCam cam;
 	
 };
