@@ -2,6 +2,7 @@
 
 short MAP_WIDTH;                
 short MAP_HEIGHT;
+short MAP_DEPTH;
 float viscosity;
 short numThreads;
 int particlesPerThread;
@@ -19,6 +20,7 @@ void ofApp::setup(){
     // The map is offset MAP_BORDER in both axis for better visibility
     MAP_WIDTH = 0.75 * ofGetScreenWidth() + MAP_BORDER;      
     MAP_HEIGHT = 0.95 * ofGetScreenHeight() + MAP_BORDER;
+    MAP_DEPTH = MAP_HEIGHT;     //xwris logo gt etsi
     
     numThreads = std::thread::hardware_concurrency(); // Get the number of available hardware threads
     if (numThreads == 0) {
@@ -107,15 +109,23 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw(){
     gui.draw();
+    // vbo.draw(GL_POINTS,0,total_particles);
+
 }
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
-
+    if (key == 'r' || key == 'R')
+        restart();
+    if (key == 's' || key == 'S')
+        shuffle();
 }
 // Particle constructor
 Particle::Particle(const float x, const float y, const float z, const int color)
 {
+    this->position = glm::vec3(x,y,z);          // Initialize position with input coordinates
+    this->velocity = glm::vec3(0.0f,0.0f,0.0f); // Start with zero velocity
+    this->type = color;                         // Assign the particle type
 }
 
 // Update particles position based on its updated velocity
@@ -131,7 +141,21 @@ void Particle::compute_Force(const Particle& acting_particle){}
 
 // Creates a specifc number of every particle type and adds them to the vector of particles
 // Every particle is initialized with random positions
-void ofApp::Create_particles(){}
+void ofApp::Create_particles(){
+    for (int j = 0; j < NUM_TYPES; j++)
+    {
+        for (int i = 0; i < number_of_particles[j]; i++)
+        {
+            // -------------------- pointers maybe here --------------------
+            Particle newParticle(ofRandom(MAP_WIDTH), ofRandom(MAP_HEIGHT), ofRandom(MAP_DEPTH), j);
+            all_particles.push_back(newParticle);
+            all_positions.push_back(newParticle.get_position());     // Extract only the position
+            all_colors.push_back(newParticle.getColor());      // Extract color
+        }
+    }
+    vbo.setVertexData(all_positions.data(),all_positions.size(),GL_STREAM_DRAW);
+    vbo.setColorData(all_colors.data(), all_colors.size(), GL_STREAM_DRAW);
+}
 
 // Initialize with random values the forces of interaction between each particle type
 void ofApp::initialize_forces(float min, float max){}
