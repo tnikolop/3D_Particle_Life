@@ -1,1 +1,2 @@
-...
+1) FIX GUI
+2) MAP BORDERS / CAMERA

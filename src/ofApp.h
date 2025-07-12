@@ -75,6 +75,5 @@ class ofApp : public ofBaseApp{
 	ofxInputField<string> field_get_name;	// input field to enter the name for saving the settings
 	ofxLabel feedback;
 
-	ofEasyCam cam;
-	
+	ofEasyCam cam;	
 };

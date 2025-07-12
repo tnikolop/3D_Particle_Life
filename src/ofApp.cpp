@@ -99,6 +99,8 @@ void ofApp::setup(){
     #pragma endregion
 
     restart();      // create particles and initialize vectors
+    ofEnableDepthTest();
+    ofSetSphereResolution(2);   // low resolution for faster rendering
 }
 
 //--------------------------------------------------------------
@@ -109,6 +111,13 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw(){
     gui.draw();
+    cam.begin();
+    for (auto &&atom : all_particles)
+    {
+        ofSetColor(atom.getColor());
+        ofDrawSphere(atom.get_position(),1);
+    }
+    cam.end();
     // vbo.draw(GL_POINTS,0,total_particles);
 
 }
@@ -147,7 +156,7 @@ void ofApp::Create_particles(){
         for (int i = 0; i < number_of_particles[j]; i++)
         {
             // -------------------- pointers maybe here --------------------
-            Particle newParticle(ofRandom(MAP_WIDTH), ofRandom(MAP_HEIGHT), ofRandom(MAP_DEPTH), j);
+            Particle newParticle(ofRandom(-MAP_WIDTH/2,MAP_WIDTH/2), ofRandom(-MAP_HEIGHT/2,MAP_HEIGHT/2), ofRandom(-MAP_DEPTH/2,MAP_DEPTH/2), j);
             all_particles.push_back(newParticle);
             all_positions.push_back(newParticle.get_position());     // Extract only the position
             all_colors.push_back(newParticle.getColor());      // Extract color
@@ -161,7 +170,9 @@ void ofApp::Create_particles(){
 void ofApp::initialize_forces(float min, float max){}
 
 // Clears all vectors and creates particles from scratch
-void ofApp::restart(){}
+void ofApp::restart(){
+    Create_particles();
+}
 
 // populates the force and force_range matrixes with random values and updates the gui sliders
 void ofApp::shuffle(){}
