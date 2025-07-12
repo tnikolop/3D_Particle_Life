@@ -29,6 +29,8 @@ public:
 	void update(const bool toggle);
 	void apply_WallRepel(const float force);
 	void compute_Force(const Particle& acting_particle);
+
+	void draw() const;
 	
 	glm::vec3 get_position() const;
 	glm::vec3 get_velocity() const;

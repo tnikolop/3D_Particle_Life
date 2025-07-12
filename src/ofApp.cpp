@@ -99,7 +99,6 @@ void ofApp::setup(){
     #pragma endregion
 
     restart();      // create particles and initialize vectors
-    ofEnableDepthTest();
     ofSetSphereResolution(2);   // low resolution for faster rendering
 }
 
@@ -111,13 +110,14 @@ void ofApp::update(){
 //--------------------------------------------------------------
 void ofApp::draw(){
     gui.draw();
+    ofEnableDepthTest();
     cam.begin();
-    for (auto &&atom : all_particles)
+    for (auto &&particle : all_particles)
     {
-        ofSetColor(atom.getColor());
-        ofDrawSphere(atom.get_position(),1);
+        particle.draw();   
     }
     cam.end();
+    ofDisableDepthTest();
     // vbo.draw(GL_POINTS,0,total_particles);
 
 }
@@ -188,6 +188,11 @@ void ofApp::load_settings(ofFile &file){}
 void ofApp::create_settings_dir()
 {
 
+}
+// The particle draws itself
+void Particle::draw() const {
+    ofSetColor(this->getColor());
+    ofDrawSphere(this->position,1);
 }
 
 // Get position vector of particle
