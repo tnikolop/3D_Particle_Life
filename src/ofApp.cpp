@@ -18,15 +18,11 @@ int color_force_range_matrix_squared[NUM_TYPES][NUM_TYPES]{{0}};      // the for
 void ofApp::setup(){
     ofSetBackgroundColor(0,0,0);    // Black Background Color
     // The map is offset MAP_BORDER in both axis for better visibility
-    // MAP_WIDTH = 0.75 * ofGetScreenWidth() + MAP_BORDER;     // 1450
-    MAP_HEIGHT = 0.95 * ofGetScreenHeight() + MAP_BORDER;   // 1036
+    // MAP_WIDTH = 0.75 * ofGetScreenWidth() + MAP_BORDER;
+    MAP_HEIGHT = 0.95 * ofGetScreenHeight() + MAP_BORDER;
     MAP_WIDTH = MAP_HEIGHT;
-    MAP_DEPTH = MAP_HEIGHT;     //xwris logo gt etsi        // 1036
-    // cout << "Screen Width: " << ofGetScreenWidth() << endl;
-    // cout << "Screen Height: " << ofGetScreenHeight() << endl;
-    // cout << "Map Width: " << MAP_WIDTH << endl;
-    // cout << "Map Height: " << MAP_HEIGHT << endl;
-    // cout << "Map Depth: " << MAP_DEPTH << endl;
+    MAP_DEPTH = MAP_HEIGHT;
+    // WIDTH = HEIGHT = DEPTH wste na exoume cube map
 
     
     numThreads = std::thread::hardware_concurrency(); // Get the number of available hardware threads
@@ -40,7 +36,7 @@ void ofApp::setup(){
     //========================= CREATE GUI =========================================
     #pragma region
     gui.setup("Settings");
-    gui.setPosition(ofGetScreenWidth()-260,20);
+    gui.setPosition(ofGetScreenWidth()-270,20);
     gui.setWidthElements(260);
     gui.add(button_restart.setup("RESTART (R)"));
     button_restart.addListener(this,&ofApp::restart);
@@ -126,7 +122,7 @@ void ofApp::draw(){
     {
         particle.draw();   
     }
-    ofDrawAxis(750);
+    ofDrawAxis(MAP_WIDTH/2);
     cam.end();
     ofDisableDepthTest();
 }
