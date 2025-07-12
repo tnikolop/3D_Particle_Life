@@ -7,7 +7,7 @@ float viscosity;
 short numThreads;
 int particlesPerThread;
 short total_particles = -1;
-short number_of_particles[NUM_TYPES] = {200,200,200};                       // per type (color)
+short number_of_particles[NUM_TYPES] = {2000,2000,2000};                       // per type (color)
 float force_matrix[NUM_TYPES][NUM_TYPES]{{0}};               // the forces of attraction of each individual color against every other color
 int color_force_range_matrix_squared[NUM_TYPES][NUM_TYPES]{{0}};      // the force range of each individual color againts every other color
                                                                         // squared so we save computational time on compute force and 
@@ -18,9 +18,16 @@ int color_force_range_matrix_squared[NUM_TYPES][NUM_TYPES]{{0}};      // the for
 void ofApp::setup(){
     ofSetBackgroundColor(0,0,0);    // Black Background Color
     // The map is offset MAP_BORDER in both axis for better visibility
-    MAP_WIDTH = 0.75 * ofGetScreenWidth() + MAP_BORDER;      
-    MAP_HEIGHT = 0.95 * ofGetScreenHeight() + MAP_BORDER;
-    MAP_DEPTH = MAP_HEIGHT;     //xwris logo gt etsi
+    // MAP_WIDTH = 0.75 * ofGetScreenWidth() + MAP_BORDER;     // 1450
+    MAP_HEIGHT = 0.95 * ofGetScreenHeight() + MAP_BORDER;   // 1036
+    MAP_WIDTH = MAP_HEIGHT;
+    MAP_DEPTH = MAP_HEIGHT;     //xwris logo gt etsi        // 1036
+    // cout << "Screen Width: " << ofGetScreenWidth() << endl;
+    // cout << "Screen Height: " << ofGetScreenHeight() << endl;
+    // cout << "Map Width: " << MAP_WIDTH << endl;
+    // cout << "Map Height: " << MAP_HEIGHT << endl;
+    // cout << "Map Depth: " << MAP_DEPTH << endl;
+
     
     numThreads = std::thread::hardware_concurrency(); // Get the number of available hardware threads
     if (numThreads == 0) {
@@ -33,7 +40,7 @@ void ofApp::setup(){
     //========================= CREATE GUI =========================================
     #pragma region
     gui.setup("Settings");
-    gui.setPosition(MAP_WIDTH+70,20);
+    gui.setPosition(ofGetScreenWidth()-260,20);
     gui.setWidthElements(260);
     gui.add(button_restart.setup("RESTART (R)"));
     button_restart.addListener(this,&ofApp::restart);
@@ -100,6 +107,9 @@ void ofApp::setup(){
 
     restart();      // create particles and initialize vectors
     ofSetSphereResolution(2);   // low resolution for faster rendering
+    cam.setPosition(0,0,1600); 
+    // cam.lookAt(glm::vec3(0,0,0));
+    
 }
 
 //--------------------------------------------------------------
@@ -116,10 +126,9 @@ void ofApp::draw(){
     {
         particle.draw();   
     }
+    ofDrawAxis(750);
     cam.end();
     ofDisableDepthTest();
-    // vbo.draw(GL_POINTS,0,total_particles);
-
 }
 
 //--------------------------------------------------------------
