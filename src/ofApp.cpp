@@ -19,7 +19,7 @@ void ofApp::setup(){
     ofSetBackgroundColor(0,0,0);    // Black Background Color
     // The map is offset MAP_BORDER in both axis for better visibility
     // MAP_WIDTH = 0.75 * ofGetScreenWidth() + MAP_BORDER;
-    MAP_HEIGHT = 0.95 * ofGetScreenHeight() + MAP_BORDER;
+    MAP_HEIGHT = 0.75 * ofGetScreenHeight() + MAP_BORDER;
     MAP_WIDTH = MAP_HEIGHT;
     MAP_DEPTH = MAP_HEIGHT;
     // WIDTH = HEIGHT = DEPTH wste na exoume cube map
@@ -101,7 +101,7 @@ void ofApp::setup(){
     gui.add(&feedback);
     #pragma endregion
 
-    ofSetSphereResolution(2);   // low resolution for faster rendering
+    // ofSetSphereResolution(2);   // low resolution for faster rendering
     cam.setPosition(0,0,1600);     
     restart();      // create particles and initialize vectors
 }
@@ -214,7 +214,22 @@ void Particle::update(bool toggle) {
 // Force that repells the particles from the edge of the map
 // so they do not stay there
 void Particle::apply_WallRepel(float force){
+    if (force == 0)
+        return;
+    if (position.x < -(MAP_WIDTH/2 - WALL_REPEL_BOUND))
+        velocity.x += (-(MAP_WIDTH/2 - WALL_REPEL_BOUND) - position.x) * force;
+    else if (position.x > MAP_WIDTH/2 - WALL_REPEL_BOUND)
+        velocity.x += (MAP_WIDTH/2 - WALL_REPEL_BOUND - position.x) * force;
 
+    if (position.y < -(MAP_HEIGHT/2 - WALL_REPEL_BOUND))
+        velocity.y += (-(MAP_HEIGHT/2 - WALL_REPEL_BOUND) - position.y) * force;
+    else if (position.y > MAP_HEIGHT/2 - WALL_REPEL_BOUND)
+        velocity.y += (MAP_HEIGHT/2 - WALL_REPEL_BOUND - position.y) * force;
+
+    if (position.z < -(MAP_DEPTH/2 - WALL_REPEL_BOUND))
+        velocity.z += (-(MAP_DEPTH/2 - WALL_REPEL_BOUND) - position.z) * force;
+    else if (position.z > MAP_DEPTH/2 - WALL_REPEL_BOUND)
+        velocity.z += (MAP_DEPTH/2 - WALL_REPEL_BOUND - position.z) * force;
 }
 
 // Calculate the forces that act on this specific particle 
