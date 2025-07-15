@@ -24,9 +24,7 @@ void ofApp::setup(){
     MAP_DEPTH = MAP_HEIGHT;     //xwris logo gt etsi        // 1036
     // cout << "Screen Width: " << ofGetScreenWidth() << endl;
     // cout << "Screen Height: " << ofGetScreenHeight() << endl;
-    // cout << "Map Width: " << MAP_WIDTH << endl;
-    // cout << "Map Height: " << MAP_HEIGHT << endl;
-    // cout << "Map Depth: " << MAP_DEPTH << endl;
+    // cou]
 
     
     numThreads = std::thread::hardware_concurrency(); // Get the number of available hardware threads
