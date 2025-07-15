@@ -103,7 +103,6 @@ void ofApp::setup(){
 
     ofSetSphereResolution(2);   // low resolution for faster rendering
     cam.setPosition(0,0,1600);     
-    initialize_forces(-MAX_FORCE,MAX_FORCE);
     restart();      // create particles and initialize vectors
 }
 
@@ -143,15 +142,21 @@ Particle::Particle(const float x, const float y, const float z, const int color)
 }
 
 // Update particles position based on its updated velocity
-void Particle::update(bool toggle) {}
+void Particle::update(bool toggle) {
+
+}
 
 // Force that repells the particles from the edge of the map
 // so they do not stay there
-void Particle::apply_WallRepel(float force){}
+void Particle::apply_WallRepel(float force){
+
+}
 
 // Calculate the forces that act on this specific particle 
 // based on another particle
-void Particle::compute_Force(const Particle& acting_particle){}
+void Particle::compute_Force(const Particle& acting_particle){
+
+}
 
 // Creates a specifc number of every particle type and adds them to the vector of particles
 // Every particle is initialized with random positions
@@ -210,20 +215,62 @@ void ofApp::restart(){
 }
 
 // populates the force and force_range matrixes with random values and updates the gui sliders
-void ofApp::shuffle(){}
+void ofApp::shuffle(){
+
+}
 
 // Save all current Simulation parameters
-void ofApp::save_settings(){}
+void ofApp::save_settings(){
+    string name = field_get_name;
+
+    // Check if the name is valid
+    if (name.empty()) {
+        ofLogWarning() << "Simulation name is empty. Can not save current simulation!";
+        feedback = "Name field cannot be empty!";
+        feedback.setDefaultTextColor(ofColor::red);
+        return;
+    }
+
+    // Check if the file already exists
+    string filePath = "Settings/"+name + ".xml";
+    ofFile file(filePath);
+    if (file.exists()) {
+        ofLogWarning() << "A file with that name ["+name+"] already exists. Simulation not saved!";
+        feedback = "Name already exists!";
+        feedback.setDefaultTextColor(ofColor::red);
+        return;
+    }
+    SimSettings.saveToFile(filePath);
+    feedback = "Saved Succesfullty!";  
+    feedback.setDefaultTextColor(ofColor::green);
+
+    // There is no refreshing. Just restart the program for loading new settings 
+}
 
 // Load saved settings from a list
 // ekteleite 2 fores gia kapoion logo me kathe klik sto dropdown. Einai buggy af to ofxdropdown
-void ofApp::load_settings(ofFile &file){}
+void ofApp::load_settings(ofFile &file){
+    string file_name = file.getFileName();
+    // Load settings
+    string file_path = "Settings/"+file_name;
+    SimSettings.loadFromFile(file_path);
+    dropdown.deselect();
+    feedback = ""; // clean feedback text. kserw oti yparxei kalyterow tropos alla aytos einai o pio aplos
+    restart();
+}
 
 // Creates a directory for storing all the saved simulation settings
 void ofApp::create_settings_dir()
 {
-
+    if (!ofDirectory(settings_folder_path).exists()) {
+        bool created = ofDirectory::createDirectory(settings_folder_path, true, true);
+        if (created == false)
+        {
+            ofLogError("Setup") << "Failed to create settings directory at: " << settings_folder_path;
+        }
+    }
 }
+
 // The particle draws itself
 void Particle::draw() const {
     ofSetColor(this->getColor());
