@@ -7,7 +7,7 @@ float viscosity;
 short numThreads;
 int particlesPerThread;
 short total_particles = -1;
-short number_of_particles[NUM_TYPES] = {2000,2000,2000};                       // per type (color)
+short number_of_particles[NUM_TYPES] = {1000,1000,1000};                       // per type (color)
 float force_matrix[NUM_TYPES][NUM_TYPES]{{0}};               // the forces of attraction of each individual color against every other color
 int color_force_range_matrix_squared[NUM_TYPES][NUM_TYPES]{{0}};      // the force range of each individual color againts every other color
                                                                         // squared so we save computational time on compute force and 
@@ -181,7 +181,34 @@ Particle::Particle(const float x, const float y, const float z, const int color)
 
 // Update particles position based on its updated velocity
 void Particle::update(bool toggle) {
+    position += velocity;  // Add velocity to position to move the particle
+    short t = toggle ? -1 : 1;  //if toggle is on reverse velocity on map edge
 
+    // the particles must always be on confined in the cube map
+    if (position.x > MAP_WIDTH/2) {
+        position.x = MAP_WIDTH/2 - 1;
+        velocity.x *= t;
+    }
+    else if (position.x < -MAP_WIDTH/2) {
+        position.x = -MAP_WIDTH/2;
+        velocity.x *= t;
+    }
+    if (position.y > MAP_HEIGHT/2) {
+        position.y = MAP_HEIGHT/2 - 1;
+        velocity.y *= t;
+    }
+    else if (position.y < -MAP_HEIGHT/2) {
+        position.y = -MAP_HEIGHT/2;
+        velocity.y *= t;
+    }
+    if (position.z > MAP_DEPTH/2) {
+        position.z = MAP_DEPTH/2 - 1;
+        velocity.z *= t;
+    }
+    else if (position.z < -MAP_DEPTH/2) {
+        position.z = -MAP_DEPTH/2;
+        velocity.z *= t;
+    }
 }
 
 // Force that repells the particles from the edge of the map
@@ -193,7 +220,17 @@ void Particle::apply_WallRepel(float force){
 // Calculate the forces that act on this specific particle 
 // based on another particle
 void Particle::compute_Force(const Particle& acting_particle){
+    glm::vec3 direction = acting_particle.position - this->position;
+    
+    float distance2 = glm::distance2(this->position,acting_particle.position);  // distance2 = distance^2 for less computation time
+    float force_strength=0;     // if out of range dont apply any force
+    float force_range = color_force_range_matrix_squared[this->type][acting_particle.type];
 
+    // Avoid division by zero
+    if (distance2 > 0 && distance2 < force_range)
+        force_strength = force_matrix[this->type][acting_particle.type] / distance2;
+
+    this->velocity = (this->velocity+force_strength * direction) *(1-viscosity);
 }
 
 // Creates a specifc number of every particle type and adds them to the vector of particles
