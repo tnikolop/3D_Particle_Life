@@ -101,11 +101,10 @@ void ofApp::setup(){
     gui.add(&feedback);
     #pragma endregion
 
-    restart();      // create particles and initialize vectors
     ofSetSphereResolution(2);   // low resolution for faster rendering
-    cam.setPosition(0,0,1600); 
-    // cam.lookAt(glm::vec3(0,0,0));
-    
+    cam.setPosition(0,0,1600);     
+    initialize_forces(-MAX_FORCE,MAX_FORCE);
+    restart();      // create particles and initialize vectors
 }
 
 //--------------------------------------------------------------
@@ -114,6 +113,7 @@ void ofApp::update(){
 }
 
 //--------------------------------------------------------------
+// proxeiro drawing wste na ftiaksw thn efarmogh kai meta tha to kanw me shaders
 void ofApp::draw(){
     gui.draw();
     ofEnableDepthTest();
@@ -167,16 +167,46 @@ void ofApp::Create_particles(){
             all_colors.push_back(newParticle.getColor());      // Extract color
         }
     }
-    vbo.setVertexData(all_positions.data(),all_positions.size(),GL_STREAM_DRAW);
-    vbo.setColorData(all_colors.data(), all_colors.size(), GL_STREAM_DRAW);
+    // vbo.setVertexData(all_positions.data(),all_positions.size(),GL_STREAM_DRAW);
+    // vbo.setColorData(all_colors.data(), all_colors.size(), GL_STREAM_DRAW);
 }
 
 // Initialize with random values the forces of interaction between each particle type
-void ofApp::initialize_forces(float min, float max){}
+void ofApp::initialize_forces(float min, float max){
+    for (int i = 0; i < NUM_TYPES; i++)
+    {
+        for (int j = 0; j < NUM_TYPES; j++)
+        {
+            force_matrix[i][j] = ofRandom(min,max);
+        }
+    }       
+}
 
 // Clears all vectors and creates particles from scratch
 void ofApp::restart(){
+    all_particles.clear();
+    all_positions.clear();
+    all_colors.clear();
+    // threads.clear();
+    number_of_particles[RED] = field_number_R;
+    number_of_particles[GREEN] = field_number_G;
+    number_of_particles[YELLOW] = field_number_Y;
+    total_particles = 0;
+    for (int i = 0; i < NUM_TYPES; i++)
+    {
+        total_particles += number_of_particles[i];
+    }
+    
+    // total_particles = number_of_particles * NUM_TYPES;
+    particlesPerThread = total_particles / numThreads;
+    // cerr << particlesPerThread << endl;
+    // threads.reserve(numThreads);
+    
+    all_particles.reserve(total_particles);
+    all_colors.reserve(total_particles);
+    all_positions.reserve(total_particles);
     Create_particles();
+    feedback = ""; // clean feedback text. kserw oti yparxei kalyterow tropos alla aytos einai o pio aplos
 }
 
 // populates the force and force_range matrixes with random values and updates the gui sliders
