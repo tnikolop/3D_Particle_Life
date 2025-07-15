@@ -108,7 +108,45 @@ void ofApp::setup(){
 
 //--------------------------------------------------------------
 void ofApp::update(){
+    number_of_particles[RED] = field_number_R;
+    number_of_particles[GREEN] = field_number_G;
+    number_of_particles[YELLOW] = field_number_Y;
+    viscosity = slider_viscosity;
 
+    force_matrix[RED][RED] = sliderRR;
+    force_matrix[RED][GREEN] = sliderRG;
+    force_matrix[RED][YELLOW] = sliderRY;
+    force_matrix[GREEN][RED] = sliderGR;
+    force_matrix[GREEN][GREEN] = sliderGG;
+    force_matrix[GREEN][YELLOW] = sliderGY;
+    force_matrix[YELLOW][RED] = sliderYR;
+    force_matrix[YELLOW][GREEN] = sliderYG;
+    force_matrix[YELLOW][YELLOW] = sliderYY;
+
+    color_force_range_matrix_squared[RED][RED] = slider_rangeRR * slider_rangeRR;
+    color_force_range_matrix_squared[RED][GREEN] = slider_rangeRG * slider_rangeRG;
+    color_force_range_matrix_squared[RED][YELLOW] = slider_rangeRY * slider_rangeRY;
+    color_force_range_matrix_squared[GREEN][RED] = slider_rangeGR * slider_rangeGR;
+    color_force_range_matrix_squared[GREEN][GREEN] = slider_rangeGG * slider_rangeGG;
+    color_force_range_matrix_squared[GREEN][YELLOW] = slider_rangeGY * slider_rangeGY;
+    color_force_range_matrix_squared[YELLOW][RED] = slider_rangeYR * slider_rangeYR;
+    color_force_range_matrix_squared[YELLOW][GREEN] = slider_rangeYG * slider_rangeYG;
+    color_force_range_matrix_squared[YELLOW][YELLOW] = slider_rangeYY * slider_rangeYY;    
+
+    for (int i = 0; i < total_particles; i++)
+    {
+        for (int j = 0; j < total_particles; j++)
+        {
+            if (i!= j) {
+                all_particles[i].compute_Force(all_particles[j]);
+            }
+        }
+        all_particles[i].apply_WallRepel(slider_wall_repel_force);
+    }
+    for (size_t i = 0; i < all_particles.size(); i++) {
+        all_particles[i].update(false); // ebgala to toggle kai to afhsa false gt oytw h alliws den allazei kati
+        // all_positions[i] = all_particles[i].position;  // Update positions in all_positions
+    }
 }
 
 //--------------------------------------------------------------
@@ -168,12 +206,10 @@ void ofApp::Create_particles(){
             // -------------------- pointers maybe here --------------------
             Particle newParticle(ofRandom(-MAP_WIDTH/2,MAP_WIDTH/2), ofRandom(-MAP_HEIGHT/2,MAP_HEIGHT/2), ofRandom(-MAP_DEPTH/2,MAP_DEPTH/2), j);
             all_particles.push_back(newParticle);
-            all_positions.push_back(newParticle.get_position());     // Extract only the position
+            // all_positions.push_back(newParticle.get_position());     // Extract only the position
             all_colors.push_back(newParticle.getColor());      // Extract color
         }
     }
-    // vbo.setVertexData(all_positions.data(),all_positions.size(),GL_STREAM_DRAW);
-    // vbo.setColorData(all_colors.data(), all_colors.size(), GL_STREAM_DRAW);
 }
 
 // Initialize with random values the forces of interaction between each particle type
@@ -190,7 +226,7 @@ void ofApp::initialize_forces(float min, float max){
 // Clears all vectors and creates particles from scratch
 void ofApp::restart(){
     all_particles.clear();
-    all_positions.clear();
+    // all_positions.clear();
     all_colors.clear();
     // threads.clear();
     number_of_particles[RED] = field_number_R;
@@ -209,7 +245,7 @@ void ofApp::restart(){
     
     all_particles.reserve(total_particles);
     all_colors.reserve(total_particles);
-    all_positions.reserve(total_particles);
+    // all_positions.reserve(total_particles);
     Create_particles();
     feedback = ""; // clean feedback text. kserw oti yparxei kalyterow tropos alla aytos einai o pio aplos
 }
