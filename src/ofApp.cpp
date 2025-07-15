@@ -7,7 +7,7 @@ float viscosity;
 short numThreads;
 int particlesPerThread;
 short total_particles = -1;
-short number_of_particles[NUM_TYPES] = {1000,1000,1000};                       // per type (color)
+short number_of_particles[NUM_TYPES] = {500,500,500};                       // per type (color)
 float force_matrix[NUM_TYPES][NUM_TYPES]{{0}};               // the forces of attraction of each individual color against every other color
 int color_force_range_matrix_squared[NUM_TYPES][NUM_TYPES]{{0}};      // the force range of each individual color againts every other color
                                                                         // squared so we save computational time on compute force and 
@@ -289,7 +289,37 @@ void ofApp::restart(){
 
 // populates the force and force_range matrixes with random values and updates the gui sliders
 void ofApp::shuffle(){
+    initialize_forces(-MAX_FORCE,MAX_FORCE);
+    sliderRR = force_matrix[RED][RED];
+    sliderRG = force_matrix[RED][GREEN];
+    sliderRY = force_matrix[RED][YELLOW];
+    sliderGR = force_matrix[GREEN][RED];
+    sliderGG = force_matrix[GREEN][GREEN];
+    sliderGY = force_matrix[GREEN][YELLOW];
+    sliderYR = force_matrix[YELLOW][RED];
+    sliderYG = force_matrix[YELLOW][GREEN];
+    sliderYY = force_matrix[YELLOW][YELLOW];
 
+    if (toggle_shuffle_radi)
+    {
+        slider_rangeRR = ofRandom(0,MAX_FORCE_RANGE);
+        slider_rangeRG = ofRandom(0,MAX_FORCE_RANGE);
+        slider_rangeRY = ofRandom(0,MAX_FORCE_RANGE);
+        slider_rangeGR = ofRandom(0,MAX_FORCE_RANGE);
+        slider_rangeGG = ofRandom(0,MAX_FORCE_RANGE);
+        slider_rangeGY = ofRandom(0,MAX_FORCE_RANGE);
+        slider_rangeYR = ofRandom(0,MAX_FORCE_RANGE);
+        slider_rangeYG = ofRandom(0,MAX_FORCE_RANGE);
+        slider_rangeYY = ofRandom(0,MAX_FORCE_RANGE);  
+    }
+    
+    if (toggle_shuffle_numbers) {
+        field_number_R = ofRandom(1,MAX_PARTICLES);
+        field_number_G = ofRandom(1,MAX_PARTICLES);
+        field_number_Y = ofRandom(1,MAX_PARTICLES);
+        restart();  // restart so we create the new amount of particles
+    }
+    feedback = ""; // clean feedback text. kserw oti yparxei kalyterow tropos alla aytos einai o pio aplos
 }
 
 // Save all current Simulation parameters

@@ -9,7 +9,7 @@ constexpr float MAX_FORCE = 50;
 constexpr short MAX_FORCE_RANGE = 200;
 constexpr float WALL_REPEL_FORCE_MAX = 10;
 constexpr short WALL_REPEL_BOUND = MAP_BORDER+4;  // the wall starts repelling particles if they're closer than WALL_REPEL_BOUND pixels
-constexpr short MAX_PARTICLES = 3000;
+constexpr short MAX_PARTICLES = 1000;
 constexpr short NUM_TYPES = 3;        // Number of different particle types
 const string settings_folder_path = "Settings";         //relative to bin/data
 
