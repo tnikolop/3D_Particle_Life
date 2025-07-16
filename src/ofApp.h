@@ -58,6 +58,7 @@ class ofApp : public ofBaseApp{
 		void initialize_color_force_range(const short min, const short max);
 		void restart();
 		void shuffle();
+		void zoom_out();
 		void save_settings();
 		void create_settings_dir();
 		void load_settings(ofFile &file);
@@ -65,7 +66,7 @@ class ofApp : public ofBaseApp{
 	ofxPanel gui;
 	ofxGuiGroup RedSettings, GreenSettings, YellowSettings, SimSettings;
 	ofxButton button_restart, button_shuffle, button_save_settings;
-	ofxToggle  toggle_shuffle_numbers, toggle_shuffle_radi;
+	ofxToggle  toggle_shuffle_numbers, toggle_shuffle_radi, toggle_symmetry;
 	ofxFloatSlider	sliderRR,sliderRG,sliderRY, sliderGR,sliderGG,sliderGY, sliderYR,sliderYG,sliderYY, 
 					slider_viscosity, slider_wall_repel_force;
 	ofxIntSlider slider_rangeRR, slider_rangeRG, slider_rangeRY,
@@ -78,4 +79,5 @@ class ofApp : public ofBaseApp{
 	ofxLabel feedback;
 
 	ofEasyCam cam;							// for 3D movement
+	ofxButton button_zoom_out;
 };

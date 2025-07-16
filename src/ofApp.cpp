@@ -7,7 +7,7 @@ float viscosity;
 short numThreads;
 int particlesPerThread;
 short total_particles = -1;
-short number_of_particles[NUM_TYPES] = {500,500,500};                       // per type (color)
+short number_of_particles[NUM_TYPES] = {1000,1000,1000};                       // per type (color)
 float force_matrix[NUM_TYPES][NUM_TYPES]{{0}};               // the forces of attraction of each individual color against every other color
 int color_force_range_matrix_squared[NUM_TYPES][NUM_TYPES]{{0}};      // the force range of each individual color againts every other color
                                                                         // squared so we save computational time on compute force and 
@@ -19,7 +19,7 @@ void ofApp::setup(){
     ofSetBackgroundColor(0,0,0);    // Black Background Color
     // The map is offset MAP_BORDER in both axis for better visibility
     // MAP_WIDTH = 0.75 * ofGetScreenWidth() + MAP_BORDER;
-    MAP_HEIGHT = 0.75 * ofGetScreenHeight() + MAP_BORDER;
+    MAP_HEIGHT = 0.85 * ofGetScreenHeight() + MAP_BORDER;
     MAP_WIDTH = MAP_HEIGHT;
     MAP_DEPTH = MAP_HEIGHT;
     // WIDTH = HEIGHT = DEPTH wste na exoume cube map
@@ -36,18 +36,21 @@ void ofApp::setup(){
     //========================= CREATE GUI =========================================
     #pragma region
     gui.setup("Settings");
-    gui.setPosition(ofGetScreenWidth()-270,20);
+    gui.setPosition(ofGetScreenWidth()-370,20);
     gui.setWidthElements(260);
     gui.add(button_restart.setup("RESTART (R)"));
     button_restart.addListener(this,&ofApp::restart);
     gui.add(button_shuffle.setup("SHUFFLE (S)"));
     button_shuffle.addListener(this,&ofApp::shuffle);
+    gui.add(button_zoom_out.setup("ZOOM OUT CAMERA (Z)"));
+    button_zoom_out.addListener(this,&ofApp::zoom_out);
     gui.add(toggle_shuffle_numbers.setup("Shuffle Number of Particles",false));
     gui.add(toggle_shuffle_radi.setup("Shuffle Radius",false));
+    gui.add(toggle_symmetry.setup("Lock Symmetry",false));
 
     SimSettings.setup("Simulation Settings");
     gui.add(&SimSettings);
-    SimSettings.add(slider_viscosity.setup("VISCOSITY",0.001F,0.0F,0.1F));  //Max Viscosity 0.1
+    SimSettings.add(slider_viscosity.setup("VISCOSITY",0.0005F,0.0F,0.1F));  //Max Viscosity 0.1
     SimSettings.add(slider_wall_repel_force.setup("WALL REPEL FORCE",0.1F,0,WALL_REPEL_FORCE_MAX));
 
     RedSettings.setup("RED SETTINGS");
@@ -101,7 +104,7 @@ void ofApp::setup(){
     gui.add(&feedback);
     #pragma endregion
 
-    // ofSetSphereResolution(2);   // low resolution for faster rendering
+    ofSetSphereResolution(2);   // low resolution for faster rendering
     cam.setPosition(0,0,1600);     
     restart();      // create particles and initialize vectors
 }
@@ -159,7 +162,7 @@ void ofApp::draw(){
     {
         particle.draw();   
     }
-    ofDrawAxis(MAP_WIDTH/2);
+    // ofDrawAxis(MAP_WIDTH/2);
     cam.end();
     ofDisableDepthTest();
 }
@@ -336,6 +339,8 @@ void ofApp::shuffle(){
     }
     feedback = ""; // clean feedback text. kserw oti yparxei kalyterow tropos alla aytos einai o pio aplos
 }
+
+void ofApp::zoom_out() {}
 
 // Save all current Simulation parameters
 void ofApp::save_settings(){
