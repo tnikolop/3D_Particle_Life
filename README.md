@@ -1,2 +1,3 @@
-- Show axis
-- FASTER RENDERING
+TO DO:
+
+1) FASTER RENDERING

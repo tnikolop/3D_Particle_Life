@@ -17,9 +17,7 @@ int color_force_range_matrix_squared[NUM_TYPES][NUM_TYPES]{{0}};      // the for
 //--------------------------------------------------------------
 void ofApp::setup(){
     ofSetBackgroundColor(0,0,0);    // Black Background Color
-    // The map is offset MAP_BORDER in both axis for better visibility
-    // MAP_WIDTH = 0.75 * ofGetScreenWidth() + MAP_BORDER;
-    MAP_HEIGHT = 0.85 * ofGetScreenHeight() + MAP_BORDER;
+    MAP_HEIGHT = 0.85 * ofGetScreenHeight();
     MAP_WIDTH = MAP_HEIGHT;
     MAP_DEPTH = MAP_HEIGHT;
     // WIDTH = HEIGHT = DEPTH wste na exoume cube map
@@ -162,7 +160,6 @@ void ofApp::draw(){
     {
         particle.draw();   
     }
-    // ofDrawAxis(MAP_WIDTH/2);
     cam.end();
     ofDisableDepthTest();
 }
