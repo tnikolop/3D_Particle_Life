@@ -42,11 +42,11 @@ void ofApp::setup(){
     button_restart.addListener(this,&ofApp::restart);
     gui.add(button_shuffle.setup("SHUFFLE (S)"));
     button_shuffle.addListener(this,&ofApp::shuffle);
-    gui.add(button_zoom_out.setup("ZOOM OUT CAMERA (Z)"));
-    button_zoom_out.addListener(this,&ofApp::zoom_out);
+    gui.add(button_zoom_out.setup("DEFAULT VIEW (Z)"));
+    button_zoom_out.addListener(this,&ofApp::default_cam_view);
     gui.add(toggle_shuffle_numbers.setup("Shuffle Number of Particles",false));
     gui.add(toggle_shuffle_radi.setup("Shuffle Radius",false));
-    gui.add(toggle_symmetry.setup("Lock Symmetry",false));
+    gui.add(toggle_symmetry.setup("Keep Symmetry on Shuffle",false));
 
     SimSettings.setup("Simulation Settings");
     gui.add(&SimSettings);
@@ -105,7 +105,7 @@ void ofApp::setup(){
     #pragma endregion
 
     ofSetSphereResolution(2);   // low resolution for faster rendering
-    cam.setPosition(0,0,1600);     
+    default_cam_view();
     restart();      // create particles and initialize vectors
 }
 
@@ -171,8 +171,10 @@ void ofApp::draw(){
 void ofApp::keyPressed(int key){
     if (key == 'r' || key == 'R')
         restart();
-    if (key == 's' || key == 'S')
+    else if (key == 's' || key == 'S')
         shuffle();
+    else if (key == 'z' || key == 'Z')
+        default_cam_view(); 
 }
 // Particle constructor
 Particle::Particle(const float x, const float y, const float z, const int color)
@@ -275,7 +277,14 @@ void ofApp::initialize_forces(float min, float max){
         {
             force_matrix[i][j] = ofRandom(min,max);
         }
-    }       
+    }
+    if (toggle_symmetry)        // keep attraction forces symmetrical
+    {
+        force_matrix[GREEN][RED] = force_matrix[RED][GREEN];
+        force_matrix[YELLOW][RED] = force_matrix[RED][YELLOW];
+        force_matrix[GREEN][YELLOW] = force_matrix[YELLOW][GREEN];
+
+    }
 }
 
 // Clears all vectors and creates particles from scratch
@@ -317,7 +326,7 @@ void ofApp::shuffle(){
     sliderYR = force_matrix[YELLOW][RED];
     sliderYG = force_matrix[YELLOW][GREEN];
     sliderYY = force_matrix[YELLOW][YELLOW];
-
+    
     if (toggle_shuffle_radi)
     {
         slider_rangeRR = ofRandom(0,MAX_FORCE_RANGE);
@@ -329,6 +338,13 @@ void ofApp::shuffle(){
         slider_rangeYR = ofRandom(0,MAX_FORCE_RANGE);
         slider_rangeYG = ofRandom(0,MAX_FORCE_RANGE);
         slider_rangeYY = ofRandom(0,MAX_FORCE_RANGE);  
+
+        if (toggle_symmetry)        // keep force range symmetrical
+        {
+            slider_rangeGR = int(slider_rangeRG);
+            slider_rangeYR = int(slider_rangeRY);
+            slider_rangeYG = int(slider_rangeGY);
+        }
     }
     
     if (toggle_shuffle_numbers) {
@@ -340,7 +356,11 @@ void ofApp::shuffle(){
     feedback = ""; // clean feedback text. kserw oti yparxei kalyterow tropos alla aytos einai o pio aplos
 }
 
-void ofApp::zoom_out() {}
+// Set camera position to the starting position so everything is visible
+void ofApp::default_cam_view() {
+    cam.setPosition(0,0,1600);     
+    cam.lookAt(glm::vec3(0,0,0));
+}
 
 // Save all current Simulation parameters
 void ofApp::save_settings(){

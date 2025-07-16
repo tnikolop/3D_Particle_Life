@@ -1,3 +1,2 @@
-- Zoom out
-- Lock symmetry shuffle
 - Show axis
+- FASTER RENDERING

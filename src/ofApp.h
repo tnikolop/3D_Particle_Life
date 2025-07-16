@@ -58,7 +58,7 @@ class ofApp : public ofBaseApp{
 		void initialize_color_force_range(const short min, const short max);
 		void restart();
 		void shuffle();
-		void zoom_out();
+		void default_cam_view();
 		void save_settings();
 		void create_settings_dir();
 		void load_settings(ofFile &file);
