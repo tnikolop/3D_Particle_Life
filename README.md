@@ -35,7 +35,6 @@ sudo apt-get install libxi-dev libxcursor-dev libxinerama-dev
 ---
 #### TO DO:
 - Faster Rendering (shaders)
-- Threads
   
 #### BUG FIXES
 - if all 3 of the same color radius is 0 then fps drops dramatically. Alla ama kaneis restart gia kapoion logo ftiaxnei

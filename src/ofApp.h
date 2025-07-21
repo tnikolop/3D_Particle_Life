@@ -9,7 +9,7 @@ constexpr float MAX_FORCE = 50;
 constexpr short MAX_FORCE_RANGE = 200;
 constexpr float WALL_REPEL_FORCE_MAX = 10;
 constexpr short WALL_REPEL_BOUND = MAP_BORDER+4;  // the wall starts repelling particles if they're closer than WALL_REPEL_BOUND pixels
-constexpr short MAX_PARTICLES = 1000;
+constexpr short MAX_PARTICLES = 3000;
 constexpr short NUM_TYPES = 3;        // Number of different particle types
 const string settings_folder_path = "Settings";         //relative to bin/data
 
@@ -38,6 +38,55 @@ public:
 	ofFloatColor getColor() const;
 };
 
+class ParticleThread : public ofThread {
+public:
+    std::vector<Particle>* particles;
+    int startIdx, endIdx, total_particles;
+	float Wall_Repel_force;
+
+    ParticleThread(std::vector<Particle>* particles, int start, int end, int total_particles, float Wall_Repel_force)
+        : particles(particles), startIdx(start), endIdx(end), total_particles(total_particles), Wall_Repel_force(Wall_Repel_force) {}
+
+	~ParticleThread() {
+    	// ofLog() << "ParticleThread destructor called" << "!" <<this->getThreadId()<<"@";
+
+		/*
+		 To problima me ta threads ginete epeidh kalyte o destructor na katastrepsei ena thread 
+		to opoio einai energo ekeimnh thn xroniki stimgh. Gia mikro airthmo somatidiwn symbainei poly syxna 
+		enw gia megalo arithmo (>3000) symbainei para poly spania.
+		Gia ayto kai exw thn deiklida asfaleias if (particles per thread > 25)
+		*/
+	}
+	
+	void threadedFunction() {
+		try
+		{
+			for (int i = startIdx; i < endIdx; i++) {
+				for (int j = 0; j < total_particles; j++) {
+					if (i != j) {
+						(*particles)[i].compute_Force((*particles)[j]);
+					}
+				}
+				// ofLogNotice() << this->getThreadId() << ": FLAG 1";
+				(*particles)[i].apply_WallRepel(Wall_Repel_force);
+				// ofLogNotice() << this->getThreadId() << ": FLAG 2";
+
+			// while (this->isThreadRunning()) {/*wait to finish*/ }
+			// me auto ftiaxnete to bug pou krasarous ta threads randomly epeidei perimenei mexri na klithei to waitForThread()
+			// wstoso kanei to programma poly pio argo kai praktika unusable gia megalo arithmo particles
+			}
+		}
+		catch (const std::exception& e) {
+        // std::cerr << "Exception in thread: " << e.what() << std::endl;
+		ofLogError() << "Exception in thread: " << e.what();
+		}
+		catch (...) {
+        // std::cerr << "Unknown exception in thread." << std::endl;
+		ofLogError() << "Unknown exception in thread.";
+    	}
+		
+	}
+};
 
 
 class ofApp : public ofBaseApp{

@@ -134,15 +134,39 @@ void ofApp::update(){
     color_force_range_matrix_squared[YELLOW][GREEN] = slider_rangeYG * slider_rangeYG;
     color_force_range_matrix_squared[YELLOW][YELLOW] = slider_rangeYY * slider_rangeYY;    
 
-    for (int i = 0; i < total_particles; i++)
+    if (particlesPerThread > 25)
     {
-        for (int j = 0; j < total_particles; j++)
+        // Compute forces using Threads
+        try
         {
-            if (i!= j) {
-                all_particles[i].compute_Force(all_particles[j]);
+	    vector<std::unique_ptr<ParticleThread>> threads;
+            for (int i = 0; i < numThreads; i++) {
+                int startIdx = i * particlesPerThread;
+                int endIdx = (i == numThreads - 1) ? total_particles : startIdx + particlesPerThread;
+                threads.emplace_back(std::make_unique<ParticleThread>(&all_particles, startIdx, endIdx,total_particles,slider_wall_repel_force));
+                threads.back()->startThread();
+            }
+            for (auto& thread : threads) {
+                thread->waitForThread();
             }
         }
-        all_particles[i].apply_WallRepel(slider_wall_repel_force);
+        catch(const std::exception& e)
+        {
+            std::cerr << e.what() << '\n';
+        }
+    }
+    else    // No threads
+    {
+        for (int i = 0; i < total_particles; i++)
+        {
+            for (int j = 0; j < total_particles; j++)
+            {
+                if (i!= j) {
+                    all_particles[i].compute_Force(all_particles[j]);
+                }
+            }
+            all_particles[i].apply_WallRepel(slider_wall_repel_force);
+        }
     }
     for (size_t i = 0; i < all_particles.size(); i++) {
         all_particles[i].update(false); // ebgala to toggle kai to afhsa false gt oytw h alliws den allazei kati
