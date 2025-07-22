@@ -34,7 +34,7 @@ void ofApp::setup(){
     //========================= CREATE GUI =========================================
     #pragma region
     gui.setup("Settings");
-    gui.setPosition(ofGetScreenWidth()-370,20);
+    gui.setPosition(ofGetScreenWidth()-390,20);
     gui.setWidthElements(260);
     gui.add(button_restart.setup("RESTART (R)"));
     button_restart.addListener(this,&ofApp::restart);
@@ -155,7 +155,7 @@ void ofApp::update(){
             std::cerr << e.what() << '\n';
         }
     }
-    else    // No threads
+    else    // If low number of particles no need for threads, it'll be slower
     {
         for (int i = 0; i < total_particles; i++)
         {

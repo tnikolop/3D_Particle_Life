@@ -49,13 +49,6 @@ public:
 
 	~ParticleThread() {
     	// ofLog() << "ParticleThread destructor called" << "!" <<this->getThreadId()<<"@";
-
-		/*
-		 To problima me ta threads ginete epeidh kalyte o destructor na katastrepsei ena thread 
-		to opoio einai energo ekeimnh thn xroniki stimgh. Gia mikro airthmo somatidiwn symbainei poly syxna 
-		enw gia megalo arithmo (>3000) symbainei para poly spania.
-		Gia ayto kai exw thn deiklida asfaleias if (particles per thread > 25)
-		*/
 	}
 	
 	void threadedFunction() {
@@ -70,10 +63,6 @@ public:
 				// ofLogNotice() << this->getThreadId() << ": FLAG 1";
 				(*particles)[i].apply_WallRepel(Wall_Repel_force);
 				// ofLogNotice() << this->getThreadId() << ": FLAG 2";
-
-			// while (this->isThreadRunning()) {/*wait to finish*/ }
-			// me auto ftiaxnete to bug pou krasarous ta threads randomly epeidei perimenei mexri na klithei to waitForThread()
-			// wstoso kanei to programma poly pio argo kai praktika unusable gia megalo arithmo particles
 			}
 		}
 		catch (const std::exception& e) {
